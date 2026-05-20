@@ -9,8 +9,16 @@ import { signIn } from 'next-auth/react'
 import { Logo } from '@/components/ui/Logo'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { Role } from '@prisma/client'
 import type { ApiResponse, SafeUser } from '@/types'
+
+// ─────────────────────────────────────────────
+// Role defined locally — never import @prisma/client in a client component
+// ─────────────────────────────────────────────
+const Role = {
+  STUDENT: 'STUDENT',
+  STAFF:   'STAFF',
+} as const
+type Role = (typeof Role)[keyof typeof Role]
 
 // ─────────────────────────────────────────────
 // TYPES
@@ -62,12 +70,12 @@ export default function RegisterPage() {
   function validateClient(): boolean {
     const next: FieldErrors = {}
 
-    if (!form.name.trim())              next.name     = 'Name is required'
-    if (!form.email.trim())             next.email    = 'Email is required'
-    if (!form.password)                 next.password = 'Password is required'
-    else if (form.password.length < 8)  next.password = 'Password must be at least 8 characters'
-    else if (!/[A-Z]/.test(form.password)) next.password = 'Password must contain an uppercase letter'
-    else if (!/[0-9]/.test(form.password)) next.password = 'Password must contain a number'
+    if (!form.name.trim())                   next.name     = 'Name is required'
+    if (!form.email.trim())                  next.email    = 'Email is required'
+    if (!form.password)                      next.password = 'Password is required'
+    else if (form.password.length < 8)       next.password = 'Password must be at least 8 characters'
+    else if (!/[A-Z]/.test(form.password))   next.password = 'Password must contain an uppercase letter'
+    else if (!/[0-9]/.test(form.password))   next.password = 'Password must contain a number'
     else if (form.password !== form.confirm) next.password = 'Passwords do not match'
 
     setErrors(next)
@@ -140,7 +148,7 @@ export default function RegisterPage() {
         <div>
           <p className="text-6xl font-black tracking-tighter text-text leading-none mb-6">
             Lost it?<br />
-            <span className="text-accent">We&rquo;ll find it.</span>
+            <span className="text-accent">We&rsquo;ll find it.</span>
           </p>
           <p className="text-text-secondary text-lg max-w-md leading-relaxed">
             Report lost items, get matched with found ones, and recover what matters — all in one place.
