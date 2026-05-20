@@ -1,0 +1,206 @@
+// prisma/schema.prisma
+
+// ## Generator & Datasource
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ## Enums
+
+enum Role {
+  STUDENT
+  STAFF
+  ADMIN
+}
+
+enum ItemStatus {
+  ACTIVE      // still lost / still available as found
+  MATCHED     // a match has been suggested
+  CLAIMED     // claim submitted, pending admin verification
+  RECOVERED   // confirmed returned to owner
+  CLOSED      // closed without recovery
+}
+
+enum MatchStatus {
+  PENDING     // awaiting user/admin review
+  CONFIRMED   // match accepted
+  REJECTED    // match dismissed
+}
+
+enum ClaimStatus {
+  PENDING     // submitted, awaiting admin action
+  APPROVED    // admin approved the claim
+  REJECTED    // admin rejected the claim
+}
+
+enum NotificationType {
+  MATCH_FOUND
+  CLAIM_SUBMITTED
+  CLAIM_APPROVED
+  CLAIM_REJECTED
+  ITEM_RECOVERED
+  SYSTEM
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String    // bcrypt hashed
+  role          Role      @default(STUDENT)
+  avatarUrl     String?
+  phone         String?
+  department    String?
+  studentId     String?
+  isActive      Boolean   @default(true)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  lostItems     LostItem[]
+  foundItems    FoundItem[]
+  claims        Claim[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model LostItem {
+  id          String     @id @default(cuid())
+  userId      String
+  name        String
+  description String
+  category    String
+  color       String?
+  size        String?
+  brand       String?
+  location    String
+  dateLost    DateTime
+  imageUrl    String?
+  status      ItemStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches     Match[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+  @@index([dateLost])
+  @@map("lost_items")
+}
+
+model FoundItem {
+  id          String     @id @default(cuid())
+  userId      String
+  name        String
+  description String
+  category    String
+  color       String?
+  size        String?
+  brand       String?
+  location    String
+  dateFound   DateTime
+  imageUrl    String?
+  status      ItemStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches     Match[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+  @@index([dateFound])
+  @@map("found_items")
+}
+
+model Match {
+  id           String      @id @default(cuid())
+  lostItemId   String
+  foundItemId  String
+  score        Float       // matching confidence score 0–100
+  status       MatchStatus @default(PENDING)
+  reviewedAt   DateTime?
+  reviewedBy   String?     // admin user id
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  lostItem     LostItem    @relation(fields: [lostItemId], references: [id], onDelete: Cascade)
+  foundItem    FoundItem   @relation(fields: [foundItemId], references: [id], onDelete: Cascade)
+  claim        Claim?
+
+  @@unique([lostItemId, foundItemId])
+  @@index([status])
+  @@index([score])
+  @@map("matches")
+}
+
+model Claim {
+  id          String      @id @default(cuid())
+  matchId     String      @unique
+  userId      String
+  message     String?
+  proofUrl    String?
+  status      ClaimStatus @default(PENDING)
+  reviewedAt  DateTime?
+  reviewedBy  String?     // admin user id
+  reviewNote  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  match       Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("claims")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+
+// ## Entity Relationships
+
+// ```
+// User ──< LostItem ──< Match >── FoundItem >── User
+//                          │
+//                        Claim
+//                          │
+//                         User
+
+// User ──< Notification
+// ```
+
+// ---
+
+// ## Notes
+
+// - All IDs use `cuid()` — collision-resistant, URL-safe
+// - `onDelete: Cascade` — deleting a user removes all their items, claims, notifications
+// - `Match` has a `@@unique([lostItemId, foundItemId])` — no duplicate match pairs
+// - `Claim` has a `@unique` on `matchId` — one claim per match maximum
+// - Indexes on all frequently queried fields: `status`, `category`, `userId`, dates
