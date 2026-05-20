@@ -1,3 +1,5 @@
+// lib/design-system.ts
+
 /**
  * recovly — Design System
  * Single source of truth for all design tokens.

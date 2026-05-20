@@ -1,26 +1,230 @@
+/* app/globals.css */
+
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─────────────────────────────────────────────
+   TAILWIND V4 THEME
+   In v4, custom tokens are defined here via @theme
+   not in tailwind.config.ts
+   ───────────────────────────────────────────── */
+@theme {
+  /* Colors — mapped to CSS variables */
+  --color-bg:              var(--color-bg-val);
+  --color-surface:         var(--color-surface-val);
+  --color-sunken:          var(--color-sunken-val);
+  --color-border:          var(--color-border-val);
+  --color-border-strong:   var(--color-border-strong-val);
+
+  --color-text:            var(--color-text-val);
+  --color-text-secondary:  var(--color-text-secondary-val);
+  --color-text-muted:      var(--color-text-muted-val);
+  --color-text-inverse:    var(--color-text-inverse-val);
+  --color-text-on-accent:  var(--color-text-on-accent-val);
+
+  --color-accent:          var(--color-accent-val);
+  --color-accent-hover:    var(--color-accent-hover-val);
+  --color-accent-muted:    var(--color-accent-muted-val);
+
+  --color-accent2:         var(--color-accent2-val);
+  --color-accent2-hover:   var(--color-accent2-hover-val);
+  --color-accent2-muted:   var(--color-accent2-muted-val);
+
+  --color-accent3:         var(--color-accent3-val);
+  --color-accent3-hover:   var(--color-accent3-hover-val);
+  --color-accent3-muted:   var(--color-accent3-muted-val);
+
+  --color-success:         var(--color-success-val);
+  --color-success-muted:   var(--color-success-muted-val);
+  --color-warning:         var(--color-warning-val);
+  --color-warning-muted:   var(--color-warning-muted-val);
+  --color-error:           var(--color-error-val);
+  --color-error-muted:     var(--color-error-muted-val);
+  --color-info:            var(--color-info-val);
+  --color-info-muted:      var(--color-info-muted-val);
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+
+  /* Border radius */
+  --radius-xs:   0.125rem;
+  --radius-sm:   0.25rem;
+  --radius-md:   0.375rem;
+  --radius-lg:   0.5rem;
+  --radius-xl:   0.75rem;
+  --radius-2xl:  1rem;
+  --radius-3xl:  1.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ─────────────────────────────────────────────
+   LIGHT MODE — actual color values
+   ───────────────────────────────────────────── */
+:root,
+[data-theme="light"] {
+  --color-bg-val:              #F6F1E9;
+  --color-surface-val:         #EEE8DC;
+  --color-sunken-val:          #E5DDD0;
+  --color-border-val:          #D6CCBC;
+  --color-border-strong-val:   #BFB3A0;
+  --color-text-val:            #1C1510;
+  --color-text-secondary-val:  #6B5D4F;
+  --color-text-muted-val:      #9C8E7E;
+  --color-text-inverse-val:    #F6F1E9;
+  --color-text-on-accent-val:  #FFFFFF;
+  --color-accent-val:          #C44B2B;
+  --color-accent-hover-val:    #A93D22;
+  --color-accent-muted-val:    #F0D4CB;
+  --color-accent2-val:         #2B5C8A;
+  --color-accent2-hover-val:   #224A72;
+  --color-accent2-muted-val:   #C8D9EC;
+  --color-accent3-val:         #3D7A5C;
+  --color-accent3-hover-val:   #306249;
+  --color-accent3-muted-val:   #C8E0D6;
+  --color-success-val:         #3D7A5C;
+  --color-success-muted-val:   #C8E0D6;
+  --color-warning-val:         #C4832B;
+  --color-warning-muted-val:   #F0E0C8;
+  --color-error-val:           #C44B2B;
+  --color-error-muted-val:     #F0D4CB;
+  --color-info-val:            #2B5C8A;
+  --color-info-muted-val:      #C8D9EC;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─────────────────────────────────────────────
+   DARK MODE
+   ───────────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-bg-val:              #1C1510;
+  --color-surface-val:         #261D16;
+  --color-sunken-val:          #1A110C;
+  --color-border-val:          #3D3028;
+  --color-border-strong-val:   #5C4838;
+  --color-text-val:            #F6F1E9;
+  --color-text-secondary-val:  #C4B5A5;
+  --color-text-muted-val:      #8C7E6E;
+  --color-text-inverse-val:    #1C1510;
+  --color-text-on-accent-val:  #FFFFFF;
+  --color-accent-val:          #C44B2B;
+  --color-accent-hover-val:    #A93D22;
+  --color-accent-muted-val:    #3D1F14;
+  --color-accent2-val:         #2B5C8A;
+  --color-accent2-hover-val:   #224A72;
+  --color-accent2-muted-val:   #162840;
+  --color-accent3-val:         #3D7A5C;
+  --color-accent3-hover-val:   #306249;
+  --color-accent3-muted-val:   #1A3328;
+  --color-success-val:         #3D7A5C;
+  --color-success-muted-val:   #1A3328;
+  --color-warning-val:         #C4832B;
+  --color-warning-muted-val:   #3D2A10;
+  --color-error-val:           #C44B2B;
+  --color-error-muted-val:     #3D1F14;
+  --color-info-val:            #2B5C8A;
+  --color-info-muted-val:      #162840;
+}
+
+/* ─────────────────────────────────────────────
+   BASE RESET
+   ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg-val);
+  color: var(--color-text-val);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+::selection {
+  background-color: var(--color-accent-muted-val);
+  color: var(--color-text-val);
+}
+
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: var(--color-surface-val); }
+::-webkit-scrollbar-thumb  { background: var(--color-border-strong-val); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted-val); }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-val);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-val);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+p {
+  color: var(--color-text-secondary-val);
+  line-height: 1.65;
+}
+
+a {
+  color: var(--color-accent2-val);
+  text-decoration: none;
+}
+a:hover { color: var(--color-accent2-hover-val); }
+
+/* ─────────────────────────────────────────────
+   UTILITY CLASSES
+   ───────────────────────────────────────────── */
+.card {
+  background-color: var(--color-surface-val);
+  border: 1px solid var(--color-border-val);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(28,21,16,0.08);
+  transition: box-shadow 200ms ease;
+}
+.card:hover {
+  box-shadow: 0 8px 24px rgba(28,21,16,0.10);
+}
+
+.display-text {
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--color-text-val);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-val) 25%,
+    var(--color-sunken-val) 50%,
+    var(--color-surface-val) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 0.5rem;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-border-val);
+  width: 100%;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
