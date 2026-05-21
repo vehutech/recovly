@@ -38,22 +38,15 @@ export default function LoginForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!validateClient()) return
-
     setIsLoading(true)
     setGlobal(null)
-
     try {
       const result = await signIn('credentials', {
         email:    email.trim().toLowerCase(),
         password: password.trim(),
         redirect: false,
       })
-
-      if (!result?.ok) {
-        setGlobal('Invalid email or password. Please try again.')
-        return
-      }
-
+      if (!result?.ok) { setGlobal('Invalid email or password. Please try again.'); return }
       router.push(callbackUrl)
       router.refresh()
     } catch {
@@ -64,63 +57,43 @@ export default function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen flex" style={{ backgroundColor: 'var(--color-bg-val)' }}>
+    <div className="auth-page">
 
-      {/* ── Left panel — branding 2/3 ── */}
-      <div
-        className="hidden lg:flex lg:w-2/3 flex-col justify-between p-16 border-r"
-        style={{ backgroundColor: 'var(--color-surface-val)', borderColor: 'var(--color-border-val)' }}
-      >
+      {/* Brand panel */}
+      <div className="auth-brand-panel">
         <Logo size="md" />
         <div>
-          <p className="text-6xl font-black tracking-tighter leading-none mb-6" style={{ color: 'var(--color-text-val)' }}>
+          <p className="auth-brand-headline">
             Welcome<br />
-            <span style={{ color: 'var(--color-accent-val)' }}>back.</span>
+            <span style={{ color: 'var(--color-accent)' }}>back.</span>
           </p>
-          <p className="text-lg max-w-md leading-relaxed" style={{ color: 'var(--color-text-secondary-val)' }}>
+          <p className="auth-brand-sub">
             Your campus property recovery hub. Report, track, and recover lost items with ease.
           </p>
         </div>
-        <p className="text-sm" style={{ color: 'var(--color-text-muted-val)' }}>
-          © {new Date().getFullYear()} recovly. All rights reserved.
-        </p>
+        <p className="auth-brand-footer">© {new Date().getFullYear()} recovly. All rights reserved.</p>
       </div>
 
-      {/* ── Right panel — form 1/3 ── */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-md">
+      {/* Form panel */}
+      <div className="auth-form-panel">
+        <div className="auth-form-inner">
 
-          <div className="lg:hidden mb-8">
+          <div style={{ marginBottom: '1rem' }} className="lg:hidden">
             <Logo size="sm" />
           </div>
 
-          <div className="mb-8">
-            <h1 className="text-3xl font-black tracking-tighter mb-1" style={{ color: 'var(--color-text-val)' }}>
-              Sign in
-            </h1>
-            <p className="text-sm" style={{ color: 'var(--color-text-secondary-val)' }}>
-              No account?{' '}
-              <Link href="/register" className="font-semibold hover:underline underline-offset-4" style={{ color: 'var(--color-accent2-val)' }}>
-                Create one
-              </Link>
-            </p>
-          </div>
+          <h1 className="auth-form-title">Sign in</h1>
+          <p className="auth-form-sub">
+            No account?{' '}
+            <Link href="/register" style={{ color: 'var(--color-accent2)', fontWeight: 600 }}>
+              Create one
+            </Link>
+          </p>
 
-          {registered && (
-            <div className="mb-6 px-4 py-3 rounded-lg border text-sm font-medium"
-              style={{ backgroundColor: 'var(--color-success-muted-val)', borderColor: 'var(--color-success-val)', color: 'var(--color-success-val)' }}>
-              Account created! Sign in to continue.
-            </div>
-          )}
+          {registered && <div className="alert alert-success">Account created! Sign in to continue.</div>}
+          {globalError && <div className="alert alert-error">{globalError}</div>}
 
-          {globalError && (
-            <div className="mb-6 px-4 py-3 rounded-lg border text-sm font-medium"
-              style={{ backgroundColor: 'var(--color-error-muted-val)', borderColor: 'var(--color-error-val)', color: 'var(--color-error-val)' }}>
-              {globalError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} noValidate className="auth-form-fields">
             <Input
               label="Email address"
               type="email"
@@ -142,12 +115,18 @@ export default function LoginForm() {
               isRequired={true}
               autoComplete="current-password"
             />
-            <Button type="submit" size="lg" isLoading={isLoading} loadingText="Signing in..." className="mt-2 w-full">
+            <Button
+              type="submit"
+              size="lg"
+              isLoading={isLoading}
+              loadingText="Signing in..."
+              style={{ width: '100%', marginTop: '0.5rem' }}
+            >
               Sign in
             </Button>
           </form>
         </div>
       </div>
-    </main>
+    </div>
   )
 }
